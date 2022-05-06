@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from 'react';
+import { useStt } from './hooks/useStt';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const speechRecognition = useStt({
+    onAudioStart: () => {
+      console.log('start');
+    },
+    onAudioEnd: () => {
+      console.log('end');
+    },
+    onResult: (e) => {
+      const { results } = e;
+      console.log({ results });
+    },
+  });
+
+  useEffect(() => {
+    if (!speechRecognition) return;
+
+    speechRecognition.start();
+
+    setTimeout(() => {
+      speechRecognition.stop();
+    }, 5000);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [speechRecognition]);
+
+  if (!speechRecognition) return <div>This browser doesn't support STT.</div>;
+
+  return <div className="App">App</div>;
 }
 
 export default App;
